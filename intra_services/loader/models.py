@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from django.conf import settings
 from django.db import models
 
+from loader.validators import Item
 
 _S = [
     "numberlist", "id_fabrics", "id_work", "id_insta", "id_contract", "id_execut", "id_object", "id_cat", "id_med",
@@ -35,8 +36,8 @@ class TestModel(models.Model):
 
 @dataclass
 class Aggregator:
-    """ Агрегатор классов в которые пишется данные из эксель """
-    testmodel = TestModel
+    """ Агрегатор классов в которые пишется данные из эксель и его валидатора из пайдентик """
+    testmodel = {TestModel: Item}
     #testmodel1 = TestModel1
 
 
