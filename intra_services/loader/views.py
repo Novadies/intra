@@ -2,6 +2,7 @@ from itertools import chain
 from pathlib import Path
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
@@ -12,12 +13,12 @@ from django.views.generic.edit import FormMixin
 from transliterate import slugify
 
 from loader.forms import UploadFileForm
-from loader.tools.logic import  save_file
+from loader.tools.logic import save_file
 from loader.models import TestModel, UploadFiles
 from logs.logger import log_apps
 
 
-class FileLoader(FormView):
+class FileLoader(LoginRequiredMixin, FormView):
     form_class = UploadFileForm
     template_name = "loader/upload_form2.html"
     model = form_class.Meta.model
