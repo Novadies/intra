@@ -54,10 +54,8 @@ def validate_dict(generator: Generator) -> Generator:
             for item in items:
                 (_tuple, data), = item.items()
                 model, validator = _tuple
-                val_data = validator.model_validate(data)  # добавил model_validate
-                data = val_data.dict()
-                # data = data
-                result_row.append({model: data})
+                val_data = validator.model_validate(data)
+                result_row.append({model: val_data.dict()})
             yield result_row
     except ValidationError as e:
         log_apps.warning(f"При валидации данных произошло исключение {e}")
