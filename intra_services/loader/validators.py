@@ -12,6 +12,10 @@ class Item(BaseModel):    # если будет передано меньше п
     id_object: Optional[str]
     id_cat: Optional[Union[int, str]]
     id_med: Optional[str]
+
+
+class Item1(BaseModel):
+    # Tут рандомная валидация
     rectangular: Optional[Union[int, str]]
     flanconnect: Optional[Union[int, str]]
     flanthick: Optional[Union[int, float, Literal[""]]]
@@ -19,14 +23,3 @@ class Item(BaseModel):    # если будет передано меньше п
     mounting: Optional[str]
     gostansi: Optional[int]
 
-class Item1(BaseModel):
-    # Tут рандомная валидация
-    rectangular: Optional[Union[int, str]]
-    flanconnect: Optional[Union[int, float, Literal[""]]]
-    flanthick: Optional[Union[int, float, Literal[""]]]
-    dismantling: Optional[str]
-    mounting: Optional[str]
-    gostansi: Optional[int]
-    different: Optional[str]
-    id_diam: Optional[str]
-    id_diamsi: Optional[str]

@@ -54,9 +54,9 @@ def validate_dict(generator: Generator) -> Generator:
             for item in items:
                 (_tuple, data), = item.items()
                 model, validator = _tuple
-                # val_data = validator.model_validate(data)  # добавил model_validate
-                # data = val_data.dict()
-                data = data
+                val_data = validator.model_validate(data)  # добавил model_validate
+                data = val_data.dict()
+                # data = data
                 result_row.append({model: data})
             yield result_row
     except ValidationError as e:
@@ -70,13 +70,15 @@ def entry_to_db(generator, N=None):
         try:
             while True:
                 accumulated_data = []
+                qwe = []
                 for _ in scope:
                     items = next(generator)
                     data = {}
+
                     if items:
                         for item in items:
-                            (model, list_data), = item.items()
-                            data[model] = list_data
+                            (model, model_data), = item.items()
+                            data[model] = qwe.append(model_data)
                         accumulated_data.append(data)
                 ic(accumulated_data)
 
