@@ -17,7 +17,7 @@ def save_file(_self, uploaded_files):
     Добавлен повтор при неудачном сохранении файла.
     """
     if uploaded_files:
-        with transaction.atomic():
+        #with transaction.atomic():
             # for uploaded_file in uploaded_files:
             upload_instance = _self.model(file_to_upload=uploaded_files, to_user=_self.request.user)
             upload_instance.save()
@@ -30,7 +30,7 @@ def save_file(_self, uploaded_files):
                 entry_to_db_task(path)
             else:
                 log_apps.warning(f'Что-то пошло не так и {upload_instance.file_to_upload.name} не загружен на сервер.')
-                raise Exception(f'File {upload_instance.file_to_upload.name} does not exist')
+                raise FileNotFoundError(f'File {upload_instance.file_to_upload.name} does not exist')
 
 
 

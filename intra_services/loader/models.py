@@ -60,7 +60,10 @@ class TestModel1(models.Model):
 class Aggregator:
     """ Агрегатор классов для записи в бд.
     в который записываются данные из эксель и его валидатора в пайдентик """
-    testmodel: Tuple[Type[models.Model], Type[BaseModel]]
+    # for _i in range(10):
+    #     locals()[f'tesmodel_{_i}']: Tuple[Type[models.Model], Type[BaseModel]]
+
+    testmodel: Tuple[Type[models.Model], Type[BaseModel]]    # todo возможно как то динамически привязывать имена аргумента к полям моделей?
     testmodel1: Tuple[Type[models.Model], Type[BaseModel]]
 
 

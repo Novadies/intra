@@ -33,5 +33,15 @@ class FileLoader(LoginRequiredMixin, FormView):
         #save_in_session(self, form, name_in_session='mail_checkbox')
 
         uploaded_files = form.cleaned_data['file_to_upload']
+        # try:
         save_file(self, uploaded_files)
+        # except FileNotFoundError:
+        #     # Обработка ошибки, когда файл не найден
+        #     return HttpResponseRedirect(reverse('loader:files'))
+        # except PermissionError:
+        #     # Обработка ошибки, когда нет прав на запись
+        #     return HttpResponseRedirect(reverse('loader:files'))
+        # except Exception:   # todo нужно ловить определённе ошибки
+        #     return HttpResponseRedirect(reverse('loader:files'))  # todo сделать ВЫВод на страницу загрузка не удалась или данные не записались
+
         return HttpResponseRedirect(reverse('loader:files'))

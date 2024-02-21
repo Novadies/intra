@@ -16,7 +16,7 @@ class Item(BaseModel):    # если будет передано меньше п
 
 class Item1(BaseModel):
     # Tут рандомная валидация
-    rectangular: Optional[Union[int, str]]
+    rectangular: Optional[Union[int, str]]                  # todo возможно некоторым полям необходимо значение по умолчанию в виде ""
     flanconnect: Optional[Union[int, str]]
     flanthick: Optional[Union[int, float, Literal[""]]]
     dismantling: Optional[str]
