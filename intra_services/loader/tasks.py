@@ -9,11 +9,11 @@ def entry_to_db_task(file_path):  # задача для селери как-то
     Сначала получаем генератор словарей, который валидирует соответсвие полей и валидирующий значения,
     entry_to_db агрегирует данные от генератора и записывает в бд bulk_create-ом."""
     """ Если исходить из того что это будет на селери, то все ошибки придут сюда а не в save_file, вызывающийся во form_valid  FileLoader """
-    # try:
-    data = read_excel__to_dict(file_path, engine='Pandas')
-    router_data = router(data, is_validate=True, check_compliance=True)
-    entry_to_db(router_data, N=10, similar_batch_size=999)
-    # except Exception:
-    #     log_apps.warning(f'Как то отправить получателю, что ничего не вышло')
+    try:
+        data = read_excel__to_dict(file_path, engine='Pandas')
+        router_data = router(data, is_validate=True, check_compliance=False)
+        entry_to_db(router_data, N=25, similar_batch_size=999)
+    except Exception as e:
+        log_apps.warning(f'Как то отправить получателю, что ничего не вышло', exc_info=True)
 
 

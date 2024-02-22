@@ -1,3 +1,4 @@
+from dataclasses import field
 from typing import Type, Any, Tuple
 
 from pydantic import BaseModel
@@ -41,10 +42,12 @@ _testmodel1 = ["rectangular", "flanconnect", "flanthick", "dismantling", "mounti
 
 
 class TestModel(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True)
     for _i in _testmodel:
         locals()[_i] = models.CharField(
             max_length=99, blank=True)
+
+    def __str__(self):
+        return self.id
 
 
 class TestModel1(models.Model):
@@ -52,25 +55,23 @@ class TestModel1(models.Model):
         locals()[_i] = models.CharField(
             max_length=99, blank=True)
 
-    # def __str__(self): # это вызывает ошибку при загрузке файлов , лол
-    #     return self.id
+    def __str__(self):
+        return self.id
 
 
+MODEL_VALIDATOR = ((TestModel, Item),
+                   (TestModel1, Item1))
+
+
+##############################################################################
 @dataclass
 class Aggregator:
-    """ Агрегатор классов для записи в бд.
-    в который записываются данные из эксель и его валидатора в пайдентик """
-    # for _i in range(10):
-    #     locals()[f'tesmodel_{_i}']: Tuple[Type[models.Model], Type[BaseModel]]
-
-    testmodel: Tuple[Type[models.Model], Type[BaseModel]]    # todo возможно как то динамически привязывать имена аргумента к полям моделей?
-    testmodel1: Tuple[Type[models.Model], Type[BaseModel]]
+    """ Агрегатор классов для записи в бд. Кортеж, содержащий кортежи из пар джанго-модель
+     и соответствующий валидатор из пайдентик """
+    mytuple: Tuple[Tuple[Type[models.Model], Type[BaseModel]], ...]
 
 
-aggregator = Aggregator(
-    testmodel=(TestModel, Item),
-    testmodel1=(TestModel1, Item1),
-)
+aggregator = Aggregator(MODEL_VALIDATOR)
 
 
 class UploadFiles(models.Model):

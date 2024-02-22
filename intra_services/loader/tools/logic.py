@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, BinaryIO, Optional
 
 import pandas as pd
 from django.contrib import messages
@@ -12,12 +12,12 @@ from logs.logger import log_apps
 from loader.tasks import entry_to_db_task
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
-def save_file(_self, uploaded_files):
+def save_file(_self: object, uploaded_files: BinaryIO) -> Optional[None]:
     """ Сохраняем файл на сервер и добавляем его адрес в бд, если сохранение успешно вызываем запись данных файла в бд
     Добавлен повтор при неудачном сохранении файла.
     """
     if uploaded_files:
-        #with transaction.atomic():
+        with transaction.atomic():
             # for uploaded_file in uploaded_files:
             upload_instance = _self.model(file_to_upload=uploaded_files, to_user=_self.request.user)
             upload_instance.save()
@@ -26,7 +26,8 @@ def save_file(_self, uploaded_files):
                 # messages.add_message(_self.request, messages.INFO,
                 #                      f"Успешная загрузка {upload_instance.file_to_upload.name} ",
                 #                      fail_silently=True)
-                # entry_to_db_task.delay(path)  # todo рассмотреть apply_async
+
+                # entry_to_db_task.delay(path)
                 entry_to_db_task(path)
             else:
                 log_apps.warning(f'Что-то пошло не так и {upload_instance.file_to_upload.name} не загружен на сервер.')

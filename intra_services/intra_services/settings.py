@@ -121,12 +121,12 @@ LOGGING = {
         'apps': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
-            "propagate": False,
+            # "propagate": False,
         },
         'debug': {
             'handlers': ['console'],
             'level': 'DEBUG',
-            "propagate": False,
+            "propagate": False,  # так и не понял для чего это
         },
         'django.server': {                   # исключает логи работы библиотек
             'handlers': ['null'],
