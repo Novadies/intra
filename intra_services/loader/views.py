@@ -23,11 +23,10 @@ class FileLoader(LoginRequiredMixin, FormView):
     template_name = "loader/upload_form2.html"
     model = form_class.Meta.model
 
-    def get_initial(self):
-        """ Начальные значения для формы """
-        initial = super().get_initial()
-        # initial['mail_checkbox'] = self.request.session.get('mail_checkbox', False)
-        return initial
+    # def get_initial(self):
+    #     """ Начальные значения для формы """
+    #     initial = super().get_initial()
+    #     return initial
 
     def form_valid(self, form):
         #save_in_session(self, form, name_in_session='mail_checkbox')

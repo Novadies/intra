@@ -9,7 +9,8 @@ from django.db import transaction
 
 from logs.logger import log_apps
 
-from loader.tasks import entry_to_db_task
+from loader.tasks import entry_to_db_task, entry_to_db_task_Class_version
+
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
 def save_file(_self: object, uploaded_files: BinaryIO) -> Optional[None]:
@@ -27,8 +28,8 @@ def save_file(_self: object, uploaded_files: BinaryIO) -> Optional[None]:
                 #                      f"Успешная загрузка {upload_instance.file_to_upload.name} ",
                 #                      fail_silently=True)
 
-                # entry_to_db_task.delay(path)
-                entry_to_db_task(path)
+                #entry_to_db_task_Class_version.delay(upload_instance, path)
+                entry_to_db_task_Class_version(upload_instance, path)
             else:
                 log_apps.warning(f'Что-то пошло не так и {upload_instance.file_to_upload.name} не загружен на сервер.')
                 raise FileNotFoundError(f'File {upload_instance.file_to_upload.name} does not exist')

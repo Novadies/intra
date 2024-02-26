@@ -12,7 +12,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls', namespace="users")),
     path('loader/', include('loader.urls', namespace="loader")),
-    # path('ckeditor/', include('ckeditor_uploader.urls')),
+    #path('something/', include('example_something_app.urls', namespace="some_app")),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 handler404 = pagenotfound
 

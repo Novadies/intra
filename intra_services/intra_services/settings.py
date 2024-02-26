@@ -33,13 +33,14 @@ INSTALLED_APPS = [
     'debug_toolbar',
     # сторонние библиотеки
     # 'snowpenguin.django.recaptcha3',
-    # 'ckeditor',
-    # 'ckeditor_uploader',
+    'ckeditor',
+    'ckeditor_uploader',
     # сторонние библиотеки аутентификации
     'axes',
     # приложения
     'users',
     'loader',
+    #'example_something_app',
 
 ]
 

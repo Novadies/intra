@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator, MaxLengthValidator
 
 from loader.models import UploadFiles
 
+
 #
 # class ContactForm(forms.Form):
 #     """ Форма обратной связи, посылает сообщение на почту юзеру и сама себе """
@@ -13,19 +14,15 @@ from loader.models import UploadFiles
 #     captcha = ReCaptchaField(label='')
 
 
-
-
 class UploadFileForm(forms.ModelForm):
     file_to_upload = forms.FileField(label='Выберите файл', required=True,
-                                     widget=forms.FileInput(attrs={'accept': '.xlsx,.xlsm,.csv', # todo для открытия csv должна быть отдельная логика
+                                     widget=forms.FileInput(attrs={'accept': '.xlsx,.xlsm',
+                                                                   # .csv', # todo  csv пока не читаем
                                                                    'id': 'exel_files'}),
-                                     validators=[
-                                     # MaxLengthValidator(max_size=5242880),
-                                     # FileExtensionValidator(allowed_extensions=
-                                     # ['xlsx', 'xlsm', 'xlsb', 'xltx', 'xltm', 'xls', 'xlt', 'xml', 'xlam', 'csv']),
+                                     validators=[  # MaxLengthValidator(max_size=5242880),
+                                         # FileExtensionValidator(allowed_extensions= ['xlsx', 'xlsm', 'csv']),
                                      ],
                                      )
-    # mail_checkbox = forms.BooleanField(label='Загружать файл на сервер?', required=False)
 
     class Meta:
         model = UploadFiles

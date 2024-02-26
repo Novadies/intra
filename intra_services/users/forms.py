@@ -81,7 +81,7 @@ class ProfileUserForm(forms.ModelForm):
 
     """ формы вне модели user """
     date_birth = forms.DateField(widget=forms.SelectDateWidget(years=tuple(range(this_year - 100, this_year - 5))))
-    about_user = forms.CharField(widget=CKEditorWidget(), required=False)
+    about_user = forms.CharField(required=False, widget=CKEditorWidget(), )
     photo = forms.ImageField(label='Выберите фото', widget=forms.FileInput(attrs={'accept': 'image/*'}), required=False)
 
     class Meta:
