@@ -1,7 +1,7 @@
 import pandas as p
 
 from contextlib import suppress
-from typing import List, Dict, Any, Generator, Type, Literal, Optional
+from typing import List, Dict, Any, Generator, Type, Literal, Optional, Union
 
 from django.db.models import Model
 from pydantic import ValidationError, BaseModel
@@ -18,14 +18,15 @@ class DB_ExcelEntry:
     """
 
     def __init__(self,
-                 aggregator,
-                 upload_instance,
-                 file_path,
+                 aggregator=None,
+                 upload_instance=None,
+                 file_path=None,
                  engine: Literal["Pandas", "Polars"] = "Pandas",
                  is_validate: bool = True,
-                 check_compliance: bool = False,
-                 N: Optional[int] = None,
-                 similar_batch_size: Optional[int] = None,
+                 check_compliance: bool = True,
+                 N: Optional[int] = 10,
+                 similar_batch_size: Optional[int] = 999,
+                 sheet: Union[str, None] = None,
                  header: bool = True,
                  value: str = '',
                  ):
@@ -37,8 +38,14 @@ class DB_ExcelEntry:
         self.check_compliance = check_compliance
         self.N = N
         self.similar_batch_size = similar_batch_size
+        self.sheet = sheet  # todo пока не используется/ нужно передавать имя страницы
         self.header = header
         self.value = value
+
+    def set_args(self, upload_instance, file_path):
+        """ Что бы определить аргументы позже """
+        self.upload_instance = upload_instance
+        self.file_path = file_path
 
     def read_excel__to_dict(self, orient='records', inplace=True) -> Generator:
         """ На вход получаем адрес файла, а на выходе генератор из словарей"""
@@ -107,12 +114,14 @@ class DB_ExcelEntry:
                     self.objects_to_create(data_dict)
 
     def objects_to_create(self, _dict: dict) -> None:
+        # fixme в текущей реализации нет связей между собою между загружаемыми моделями, так как связи могут быть разными,
+        # fixme то для разных вариантов загружаемых моделей нужно переопределять objects_to_create() и не забывать создавать связи в моделях
         """ запись в бд с помощью  bulk_create.
         Данный метод вероятно придётся переопределять если загружать другие файлы
         """
         for model, list_data in _dict.items():
             objects = (model(**item, to_uploader=self.upload_instance, to_user=self.upload_instance.to_user)
-                       for item in list_data)
+                       for item in list_data)  # добавлена связь на модель загрузчика и юзера
             model.objects.bulk_create(objects)
 
     @staticmethod
@@ -139,6 +148,8 @@ class DB_ExcelEntry:
         return {model: val_data.dict()}
 
 
+########################################################################################################################
+########################################################################################################################
 ########################################################################################################################
 # Канонический вариант обычных функций
 

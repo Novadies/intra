@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # приложения
     'users',
     'loader',
-    #'example_something_app',
+    'example_something_app',
 
 ]
 

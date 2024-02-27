@@ -1,17 +1,7 @@
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.core.validators import FileExtensionValidator, MaxLengthValidator
 
 from loader.models import UploadFiles
-
-
-#
-# class ContactForm(forms.Form):
-#     """ Форма обратной связи, посылает сообщение на почту юзеру и сама себе """
-#     name = forms.CharField(label='Имя', max_length=255)
-#     email = forms.EmailField(label='Email')
-#     content = forms.CharField(label='', widget=CKEditorUploadingWidget())
-#     captcha = ReCaptchaField(label='')
 
 
 class UploadFileForm(forms.ModelForm):

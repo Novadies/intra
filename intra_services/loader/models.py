@@ -1,4 +1,4 @@
-from dataclasses import field
+from pathlib import Path
 from typing import Type, Any, Tuple
 
 from model_utils import Choices
@@ -11,7 +11,8 @@ from django.db import models
 
 from loader.validators import Item, Item1
 
-_testmodel = ["numberlist", "id_fabrics", "id_work", "id_insta", "id_contract", "id_execut", "id_object", "id_cat", "id_med", ]
+_testmodel = ["numberlist", "id_fabrics", "id_work", "id_insta", "id_contract", "id_execut", "id_object", "id_cat",
+              "id_med", ]
 
 _testmodel1 = ["rectangular", "flanconnect", "flanthick", "dismantling", "mounting", "gostansi", ]
 
@@ -20,7 +21,6 @@ class TestModel(models.Model):
     for _i in _testmodel:
         locals()[_i] = models.CharField(
             max_length=99, blank=True)
-
 
     to_uploader = models.ForeignKey(
         "UploadFiles",
@@ -34,8 +34,10 @@ class TestModel(models.Model):
         related_name="testmodel",
         null=True,
     )
+
     def __str__(self):
         return self.id
+
 
 class TestModel1(models.Model):
     for _i in _testmodel1:
@@ -54,6 +56,7 @@ class TestModel1(models.Model):
         related_name="testmodel1",
         null=True,
     )
+
     def __str__(self):
         return self.id
 
@@ -73,10 +76,14 @@ class Aggregator:
 aggregator = Aggregator(MODEL_VALIDATOR)
 
 
+def user_directory_path(instance, filename):
+    return Path('uploads') / instance.to_user.username / filename
+
+
 class UploadFiles(models.Model):
     STATUS = Choices(('draft', 'НЕ ЗАПИСАНО В БД'), ('published', 'данные в базе'))
     db_record = StatusField()
-    file_to_upload = models.FileField(upload_to='uploads', null=True)
+    file_to_upload = models.FileField(upload_to=user_directory_path, null=True)
     time = models.DateTimeField(auto_now_add=True)
     to_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

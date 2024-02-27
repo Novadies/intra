@@ -1,16 +1,9 @@
-from itertools import chain
-from pathlib import Path
-
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import View, ListView, FormView, CreateView, DetailView
-from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormMixin
-from transliterate import slugify
 
 from loader.forms import UploadFileForm
 from loader.tools.logic import save_file
@@ -19,6 +12,7 @@ from logs.logger import log_apps
 
 
 class FileLoader(LoginRequiredMixin, FormView):
+
     form_class = UploadFileForm
     template_name = "loader/upload_form2.html"
     model = form_class.Meta.model
@@ -29,12 +23,16 @@ class FileLoader(LoginRequiredMixin, FormView):
     #     return initial
 
     def form_valid(self, form):
-        #save_in_session(self, form, name_in_session='mail_checkbox')
+        try:
+            instance = self.instance
+        except AttributeError:
+            instance = None
+        print(instance)
 
         uploaded_files = form.cleaned_data['file_to_upload']
         """ Ловля ошибок здесь нужна только для того что бы редиректить на определённые страницы, если есть надобность """
         try:
-            save_file(self, uploaded_files)
+            save_file(self, uploaded_files, instance)     # сюда можно передавать экземпляр DB_ExcelEntry
         except FileNotFoundError:
             # Обработка ошибки, когда файл не найден
             return HttpResponseRedirect(reverse('loader:files'))
