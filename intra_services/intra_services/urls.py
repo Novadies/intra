@@ -11,7 +11,6 @@ urlpatterns = [
     # path('', decorator_redirect_page('search-url')(redirect_page)),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls', namespace="users")),
-    # path('loader/', include('loader.urls', namespace="loader")),
     path('something/', include('example_something_app.urls', namespace="some_app")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
