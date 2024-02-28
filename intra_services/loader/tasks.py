@@ -23,9 +23,10 @@ def entry_to_db_task_Class_version(upload_instance, file_path, instance_DB_Excel
     """ Если исходить из того что это будет на селери, то все ошибки придут сюда а не в save_file, вызывающийся во form_valid  FileLoader """
     try:
         # вместо save_class можно использовать экземпляр instance_DB_ExcelEntry, который передаётся через представление
-        if instance_DB_ExcelEntry:  # передаём агрументы, которые нельзя было передать изначально
+        if instance_DB_ExcelEntry:                        # передаём агрументы, которые нельзя было передать изначально
             instance_DB_ExcelEntry.set_args(upload_instance=upload_instance, file_path=file_path)
-
+        else:
+            print('ВНИМАНИЕ! ДЛЯ ЗАПИСИ ИСПОЛЬЗУЕТСЯ ТЕСТОВАЯ МОДЕЛЬ!')
         save_class = instance_DB_ExcelEntry or DB_ExcelEntry(
             aggregator=aggregator,
             upload_instance=upload_instance,

@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'axes',
     # приложения
     'users',
-    'loader',
+    'loader',    # загрузчик
     'example_something_app',
 
 ]
@@ -188,7 +188,7 @@ AUTHENTICATION_BACKENDS = [
 
 LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

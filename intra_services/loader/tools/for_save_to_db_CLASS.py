@@ -9,6 +9,7 @@ from itertools import count
 
 from django.db import transaction
 
+from loader.models import Aggregator
 from logs.logger import log_apps
 
 
@@ -18,15 +19,15 @@ class DB_ExcelEntry:
     """
 
     def __init__(self,
-                 aggregator=None,
-                 upload_instance=None,
-                 file_path=None,
+                 aggregator: Aggregator = None,
+                 upload_instance=None,      # сам файл
+                 file_path=None,            # путь к файлу
                  engine: Literal["Pandas", "Polars"] = "Pandas",
                  is_validate: bool = True,
                  check_compliance: bool = True,
                  N: Optional[int] = 10,
                  similar_batch_size: Optional[int] = 999,
-                 sheet: Union[str, None] = None,
+                 sheet: Optional[str] = None,
                  header: bool = True,
                  value: str = '',
                  ):
@@ -73,16 +74,15 @@ class DB_ExcelEntry:
         """
         for item in generator:
             result_row = []
-            for instance in self.aggregator.mytuple:  # Получаем кортежи (модель - валидатор) из класса Aggregator
+            for instance in self.aggregator.mytuple:        # Получаем кортежи (модель - валидатор) из класса Aggregator
                 model, validator = instance
                 model_fields = [field for field in model._meta.fields]
-                if self.check_compliance:  # проверка полей модели и валидатора
+                if self.check_compliance:                                           # проверка полей модели и валидатора
                     self.check_fields(model_fields, validator)
-                data = {
-                    model: {key: value for key, value in item.items() if key in [field.name for field in model_fields]}}
-                data = self.validate(data, validator) if self.is_validate else data  # валидация пайдентиком
+                data = {model: {key: value for key, value in item.items() if key in [field.name for field in model_fields]}}
+                data = self.validate(data, validator) if self.is_validate else data              # валидация пайдентиком
                 result_row.append(data)
-            self.check_compliance = False  # для того что бы не проверять по десять раз одно и тоже
+            self.check_compliance = False                       # для того что бы не проверять по десять раз одно и тоже
             yield result_row
 
     def entry_to_db(self, generator: Generator) -> None:
@@ -94,9 +94,9 @@ class DB_ExcelEntry:
                     if_break = False  # флаг для break
                     data_dict = {}
                     for i in scope:
-                        items = next(generator)  # итерация по генератору
+                        items = next(generator)                     # итерация по генератору
                         if items:
-                            for item in items:  # итерация по 'моделям'
+                            for item in items:                      # итерация по 'моделям'
                                 (model, model_data), = item.items()
                                 if model not in data_dict:
                                     data_dict[
@@ -104,13 +104,13 @@ class DB_ExcelEntry:
                                 data_dict[model].append(model_data)
                                 if self.similar_batch_size and i * len(model_data) > self.similar_batch_size:
                                     if_break = True
-                        if if_break:  # выход из цикла for если значений больше чем similar_batch_size
+                        if if_break:                    # выход из цикла for если значений больше чем similar_batch_size
                             break
-                    self.objects_to_create(data_dict)  # записываем в бд в конце каждой итерации while
+                    self.objects_to_create(data_dict)                   # записываем в бд в конце каждой итерации while
             except StopIteration:
                 self.upload_instance.db_record = self.upload_instance.STATUS.published
-                self.upload_instance.save()  # изменяем статус загруженного файла
-                if data_dict:  # Если остались объекты после окончания генерации, записываем их
+                self.upload_instance.save()                             # изменяем статус загруженного файла
+                if data_dict:                           # Если остались объекты после окончания генерации, записываем их
                     self.objects_to_create(data_dict)
 
     def objects_to_create(self, _dict: dict) -> None:

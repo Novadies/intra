@@ -35,9 +35,6 @@ class TestModel(models.Model):
         null=True,
     )
 
-    def __str__(self):
-        return self.id
-
 
 class TestModel1(models.Model):
     for _i in _testmodel1:
@@ -57,9 +54,6 @@ class TestModel1(models.Model):
         null=True,
     )
 
-    def __str__(self):
-        return self.id
-
 
 MODEL_VALIDATOR = ((TestModel, Item),
                    (TestModel1, Item1))
@@ -75,6 +69,7 @@ class Aggregator:
 
 aggregator = Aggregator(MODEL_VALIDATOR)
 
+##############################################################################
 
 def user_directory_path(instance, filename):
     return Path('uploads') / instance.to_user.username / filename

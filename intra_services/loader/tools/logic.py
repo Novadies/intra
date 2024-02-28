@@ -12,7 +12,7 @@ from loader.tasks import entry_to_db_task_Class_version
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
 def save_file(_self: object,
               uploaded_files: BinaryIO,
-              instance_DB_ExcelEntry: Union[Type[DB_ExcelEntry], None] = None) -> Optional[None]:
+              instance_DB_ExcelEntry: Optional[DB_ExcelEntry] = None):
     """ Сохраняем файл на сервер и добавляем его адрес в бд, если сохранение успешно вызываем запись данных файла в бд
     Добавлен повтор при неудачном сохранении файла.
     """

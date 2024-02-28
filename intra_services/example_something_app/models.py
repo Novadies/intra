@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from example_something_app.validators import ItemN
-from loader.models import Aggregator
-
+from loader.models import UploadFiles
 
 _testmodel = [
     "numberlist", "id_fabrics", "id_work", "id_insta", "id_contract", "id_execut", "id_object", "id_cat", "id_med",
@@ -41,13 +39,20 @@ class ModelN(models.Model):
         locals()[_i] = models.CharField(
             max_length=99, blank=True)
 
-    def __str__(self):
-        return self.id
+    to_uploader = models.ForeignKey(
+        UploadFiles,
+        on_delete=models.SET_NULL,
+        related_name="modelN",
+        null=True,
+    )
+    to_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="modelN",
+        null=True,
+    )
 
-########################################################################################################################
-
-MODEL_VALIDATOR = ((ModelN, ItemN), )
-
-aggregator = Aggregator(mytuple=MODEL_VALIDATOR)
+    # def __str__(self):
+    #     return self.id
 
 
