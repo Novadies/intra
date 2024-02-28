@@ -4,7 +4,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 from django.db import transaction
 
-from loader.tools.for_save_to_db_CLASS import DB_ExcelEntry
+from loader.tools.save_to_db_class import DB_ExcelEntry
 from logs.logger import log_apps
 from loader.tasks import entry_to_db_task_Class_version
 

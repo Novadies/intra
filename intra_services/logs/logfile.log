@@ -1073,3 +1073,23 @@
 {"timestamp": "28-02-2024|12:02:58|279876Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
 {"timestamp": "28-02-2024|12:02:58|623910Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
 {"timestamp": "28-02-2024|12:02:58|686917Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"status_code": 404, "request": "<WSGIRequest: GET '/users/'>", "timestamp": "28-02-2024|12:03:28|628889Z", "level": "WARNING", "module": "log", "message": "Not Found: /users/"}
+{"timestamp": "28-02-2024|12:03:40|394817Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"status_code": 404, "request": "<WSGIRequest: GET '/users/%20login/'>", "timestamp": "28-02-2024|12:03:53|194097Z", "level": "WARNING", "module": "log", "message": "Not Found: /users/ login/"}
+{"status_code": 404, "request": "<WSGIRequest: GET '/users/'>", "timestamp": "28-02-2024|12:05:22|781055Z", "level": "WARNING", "module": "log", "message": "Not Found: /users/"}
+{"timestamp": "28-02-2024|12:41:00|155760Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\example_something_app\\views.py changed, reloading."}
+{"timestamp": "28-02-2024|12:41:00|987760Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\loader\\tasks.py changed, reloading."}
+{"timestamp": "28-02-2024|12:41:01|210760Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\example_something_app\\views.py changed, reloading."}
+{"timestamp": "28-02-2024|12:41:01|398760Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\loader\\tasks.py changed, reloading."}
+{"timestamp": "28-02-2024|12:41:04|637760Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|12:41:05|247760Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|12:41:05|252760Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|12:41:05|296760Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|13:49:06|949643Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\example_something_app\\views.py changed, reloading."}
+{"timestamp": "28-02-2024|13:49:07|349683Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\example_something_app\\views.py changed, reloading."}
+{"timestamp": "28-02-2024|13:49:07|391687Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\example_something_app\\views.py changed, reloading."}
+{"timestamp": "28-02-2024|13:49:08|098758Z", "level": "INFO", "module": "autoreload", "message": "C:\\Users\\RysukAO\\PycharmProjects\\intra\\intra_services\\example_something_app\\views.py changed, reloading."}
+{"timestamp": "28-02-2024|13:49:11|424090Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|13:49:11|497097Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|13:49:12|061154Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}
+{"timestamp": "28-02-2024|13:49:12|941242Z", "level": "INFO", "module": "autoreload", "message": "Watching for file changes with StatReloader"}

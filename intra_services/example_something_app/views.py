@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import FormView
 
 from example_something_app.forms import ThisAppUploadFileForm
-from example_something_app.tools.for_save_to_db_CLASS import instance_DB_ExcelEntry
+from example_something_app.tools.save_to_db_class import instance_DB_ExcelEntry
 from loader.views import FileLoader
 
 
@@ -21,7 +21,8 @@ class PsevdoFileLoader(LoginRequiredMixin, View):
 
 
 class AppFileLoader(FileLoader):
-    local_instance = instance_DB_ExcelEntry     # необходимо передать экземпляр класса загрузчика
+    """ необходимо передать экземпляр класса загрузчика """
+    local_instance = instance_DB_ExcelEntry
 
 
 class PsevdoFile(LoginRequiredMixin, FormView):

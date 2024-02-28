@@ -1,5 +1,5 @@
 from .models import aggregator
-from .tools.for_save_to_db_CLASS import read_excel__to_dict, entry_to_db, router, DB_ExcelEntry
+from .tools.save_to_db_class import read_excel__to_dict, entry_to_db, router, DB_ExcelEntry
 
 from logs.logger import log_apps
 

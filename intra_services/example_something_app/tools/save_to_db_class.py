@@ -1,7 +1,7 @@
 from example_something_app.models import ModelN
 from example_something_app.validators import ItemN
 from loader.models import Aggregator
-from loader.tools.for_save_to_db_CLASS import DB_ExcelEntry
+from loader.tools.save_to_db_class import DB_ExcelEntry
 from logs.logger import log_apps
 
 
