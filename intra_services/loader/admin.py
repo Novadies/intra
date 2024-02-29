@@ -12,7 +12,7 @@ class Upload(admin.ModelAdmin):
     list_display_links = ('to_user',)
     search_fields = ["file_to_upload", "to_user", "db_record"]
     date_hierarchy = 'time'
-    list_per_page = 100
+    list_per_page = 104
 
     def has_add_permission(self, request):
         return False

@@ -1,11 +1,0 @@
-Необходимо иметь модель, с соответствующими полями. Не забыть указать связи, внешние ключи и прочее. Это очевидное напоминание.
-Создать url адрес для страницы, на которой будет загрузка в urls. Тоже самое.
-Создать страницу, на которой будет загрузка, вставить в неё {% include 'loader/includes/include_upload_form.html' %} .
-Создать валидатор с помощью pydantic  для полей модели. Пример в loader.
-В forms создать форму, наследующую UploadFileForm.
-Создать exemple.py, в котором создать класс, наследующий DB_ExcelEntry, при необходимости (практически всегда, когда модель не одна) переопределить метод objects_to_create. Создать экземпляр класса, в котором определить обязательные и при необходимости необязательные аргументы для данной загрузки файла. Например в aggregator передаётся кортеж из кортежа пары модель и его валидатор.
-В данном случае удобно обрабатывать GET и POST запросы разными представлениями,
-class PsevdoFileLoader(LoginRequiredMixin, View):    def get(self, request, *args, **kwargs):        view = PsevdoFile.as_view()        return view(request, *args, **kwargs)    def post(self, request, *args, **kwargs):        view = AppFileLoader.as_view()        return view(request, *args, **kwargs)
-Соответственно для обработки POST запроса используется наследуемый от FileLoader класс, куда обязательно передаётся экземпляр класса созданный в exemple.py.
-class AppFileLoader(FileLoader):    local_instance = instance_DB_ExcelEntry
-Собственно этот экземпляр и содержит в себе отличия возникающие при обработки разных данных из разных приложений.

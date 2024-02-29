@@ -5,6 +5,7 @@ from loader.models import UploadFiles
 
 
 class UploadFileForm(forms.ModelForm):
+    """ базовый класс в котором определяется форма для загрузки"""
     file_to_upload = forms.FileField(label='Выберите файл', required=True,
                                      widget=forms.FileInput(attrs={'accept': '.xlsx,.xlsm',
                                                                    # .csv', # todo  csv пока не читаем

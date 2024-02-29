@@ -23,9 +23,6 @@ def save_file(_self: object,
             upload_instance.save()
             path = Path(upload_instance.file_to_upload.path)
             if path.exists():
-                # messages.add_message(_self.request, messages.INFO,
-                #                      f"Успешная загрузка {upload_instance.file_to_upload.name} ",
-                #                      fail_silently=True)
                 #entry_to_db_task_Class_version.delay(upload_instance, path)
                 entry_to_db_task_Class_version(upload_instance, path, instance_DB_ExcelEntry)
             else:
