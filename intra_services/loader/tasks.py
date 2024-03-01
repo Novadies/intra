@@ -1,16 +1,20 @@
+from funcy import print_durations
+
 from .models import aggregator
 from .tools.save_to_db_class import DB_ExcelEntry
 
 from logs.logger import log_apps
 
 
-def entry_to_db_task_Class_version(upload_instance, file_path, instance_DB_ExcelEntry):  # задача для селери как-то так выглядит
+@print_durations('ms')
+def entry_to_db_task_Class_version(upload_instance, file_path,
+                                   instance_DB_ExcelEntry):  # задача для селери как-то так выглядит
     """ Последовательно вызываем функции для записи на сервер.
     Сначала получаем генератор словарей, который валидирует соответсвие полей и валидирующий значения,
     entry_to_db агрегирует данные от генератора и записывает в бд bulk_create-ом."""
     """ Если исходить из того что это будет на селери, то все ошибки придут сюда а не в save_file, вызывающийся во form_valid  FileLoader """
     try:
-        if instance_DB_ExcelEntry:                        # передаём агрументы, которые нельзя было передать изначально
+        if instance_DB_ExcelEntry:  # передаём агрументы, которые нельзя было передать изначально
             instance_DB_ExcelEntry.set_args(upload_instance=upload_instance, file_path=file_path)
         else:
             print('ВНИМАНИЕ! ДЛЯ ЗАПИСИ ИСПОЛЬЗУЕТСЯ ТЕСТОВАЯ МОДЕЛЬ!')

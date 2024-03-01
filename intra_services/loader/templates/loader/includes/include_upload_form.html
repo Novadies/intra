@@ -1,13 +1,14 @@
 
 <form method="POST" enctype="multipart/form-data" class="form-horizontal">
 {% csrf_token %}
+
 <div class="form-group">
     <label for="exel_files" class="col-md-3 col-sm-3 col-xs-12 control-label">{{ form.file_to_upload.label }}</label>
     <div class="col-md-8">
 
 <!--     <input type="file" name="file_to_upload" id="exel_files" class="form-control" accept=".xlsx,.xlsm,.xlsb,.xltx,.xltm,.xls,.xlt,.xml,.xlam, .csv" multiple>-->
-        {{ form.file_to_upload }}
 
+    {{ formset }}
         <ul id="file-list"></ul> <!-- Список для отображения выбранных файлов -->
     </div>
 </div>

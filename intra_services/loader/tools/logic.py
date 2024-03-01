@@ -1,5 +1,7 @@
 from pathlib import Path
 from typing import List, Dict, Any, BinaryIO, Optional, Type, Union
+
+from funcy import print_durations
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from django.db import transaction
@@ -9,6 +11,7 @@ from logs.logger import log_apps
 from loader.tasks import entry_to_db_task_Class_version
 
 
+@print_durations('ms')
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
 def save_file(_self: object,
               uploaded_files: BinaryIO,

@@ -32,11 +32,13 @@ INSTALLED_APPS = [
     #'django_filters',
     'debug_toolbar',
     # сторонние библиотеки
-    # 'snowpenguin.django.recaptcha3',
+    'crispy_forms',
+    "crispy_bootstrap4",
     'ckeditor',
     'ckeditor_uploader',
     # сторонние библиотеки аутентификации
     'axes',
+    'extra_views',
     # приложения
     'users',
     'loader',    # загрузчик
@@ -261,6 +263,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
+""" CRISPY """
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 """ CKEDITOR """
 CKEDITOR_UPLOAD_PATH = "uploads/"

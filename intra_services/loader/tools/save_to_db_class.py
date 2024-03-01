@@ -2,6 +2,8 @@ import pandas as p
 
 from contextlib import suppress
 from typing import List, Dict, Any, Generator, Type, Literal, Optional, Union
+
+from funcy import print_durations, print_iter_durations
 from pydantic import ValidationError, BaseModel
 from itertools import count
 
@@ -46,6 +48,7 @@ class DB_ExcelEntry:
         self.upload_instance = upload_instance
         self.file_path = file_path
 
+    @print_durations('ms', threshold=0.01)
     def read_excel__to_dict(self, orient='records', inplace=True) -> Generator:
         """ На вход получаем адрес файла, а на выходе генератор из словарей"""
         # match engine:               # 3.10
@@ -57,7 +60,8 @@ class DB_ExcelEntry:
 
         """ df это генератор """
         try:
-            """read_excel возвращает либо DataFrame, либо словарь из них, если указан множественный выбор страниц (например None),
+            """
+            read_excel возвращает либо DataFrame, либо словарь из них, если указан множественный выбор страниц (например None),
             но такой вариант вероятно смысла рассматривать нет, поэтому sheet_name это либо поведение по умолчанию, либо имя страницы
             """
             sheet_name = self.sheet or 0
@@ -69,6 +73,7 @@ class DB_ExcelEntry:
         row_list_dict = df.to_dict(orient=orient)
         yield from row_list_dict[1:] if self.header else row_list_dict  # если есть заголовок, убираем его
 
+    @print_durations('ms', threshold=0.01)
     def router(self, generator: Generator) -> Generator:
         """ Разделяем генератор по структурным частям, в соответствии с моделями, то есть читаем его, обрабатываем, передаём дальше
         Так же ранее ключи в генераторе были кортежем(model, validator), а стали просто model.
@@ -86,6 +91,7 @@ class DB_ExcelEntry:
             self.check_compliance = False                       # для того что бы не проверять по десять раз одно и тоже
             yield result_row
 
+    @print_durations('ms', threshold=0.01)
     def entry_to_db(self, generator: Generator) -> None:
         """ Собираем N строк от генератора и записываем bulk_create-ом"""
         scope = range(self.N) if self.N is not None and isinstance(self.N, int) else count(0)
@@ -95,13 +101,12 @@ class DB_ExcelEntry:
                     if_break = False  # флаг для break
                     data_dict = {}
                     for i in scope:
-                        items = next(generator)                     # итерация по генератору
+                        items = next(generator)                                         # итерация по генератору
                         if items:
-                            for item in items:                      # итерация по 'моделям'
+                            for item in items:  # print_iter_durations(items):             # итерация по 'моделям'
                                 (model, model_data), = item.items()
                                 if model not in data_dict:
-                                    data_dict[
-                                        model] = []  # Если модель не встречалась ранее, создаем пустой список для нее
+                                    data_dict[model] = []  # Если модель не встречалась ранее, создаем пустой список для нее
                                 data_dict[model].append(model_data)
                                 if self.similar_batch_size and i * len(model_data) > self.similar_batch_size:
                                     if_break = True
@@ -114,10 +119,12 @@ class DB_ExcelEntry:
                 if data_dict:                           # Если остались объекты после окончания генерации, записываем их
                     self.objects_to_create(data_dict)
 
+    #@print_durations('ms', threshold=0.01)
     def objects_to_create(self, _dict: dict) -> None:
         # fixme в текущей реализации нет связей между собою между загружаемыми моделями, так как связи могут быть разными,
         # fixme то для разных вариантов загружаемых моделей нужно переопределять objects_to_create() и не забывать создавать связи в моделях
-        """ запись в бд с помощью  bulk_create.
+        """
+        Запись в бд с помощью  bulk_create.
         Данный метод вероятно придётся переопределять если загружать другие файлы
         """
         for model, list_data in _dict.items():
@@ -125,7 +132,9 @@ class DB_ExcelEntry:
                        for item in list_data)  # добавлена связь на модель загрузчика и юзера
             model.objects.bulk_create(objects)
 
+
     @staticmethod
+    @print_durations('ms', threshold=0.01)
     def check_fields(model_fields: List[Model], validator: Type[BaseModel]):
         """ Поля модели и поля его валидатора должны совпадать """
 
@@ -140,7 +149,9 @@ class DB_ExcelEntry:
         if mod_fields != val_fields:
             raise Exception(f'Не соответствие между существующими полями модели {mod_fields} и полями его валидатора {val_fields}')
 
+
     @staticmethod
+    @print_durations('ms', threshold=0.01)
     def validate(item: dict, validator: Type[BaseModel]) -> dict:
         """ Валидация данных перед генерацией значения """
         (model, data), = item.items()
