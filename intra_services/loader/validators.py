@@ -1,6 +1,8 @@
 from typing import List, Optional, Union, Literal, Any
 from pydantic import BaseModel, Field
 
+##############################################################################
+# Это используется для тестов
 
 class Item(BaseModel):    # если будет передано меньше полей на проверку, то в словаре будут 'attr': None
     numberlist: Optional[Union[int, float]]    # todo сделать алиасы для полей

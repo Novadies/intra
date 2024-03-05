@@ -17,6 +17,6 @@ def decorator_redirect_page(name):
 def pagenotfound(request, *args, **kwargs):
     return render(request, '404.html', status=404)
 
-def redirect_page(request, name='start-url'):
+def redirect_page(request, name=''):  # fixme указать страницу для редиректа
     """ Редирект, применяется с декоратором decorator_redirect_page """
     return HttpResponseRedirect(reverse(name))

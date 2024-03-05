@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict, Any, BinaryIO, Optional, Type, Union
+from typing import BinaryIO, Optional
 
 from funcy import print_durations
 from tenacity import retry, stop_after_attempt, wait_fixed
@@ -15,7 +15,7 @@ from loader.tasks import entry_to_db_task_Class_version
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
 def save_file(_self: object,
               uploaded_files: BinaryIO,
-              instance_DB_ExcelEntry: Optional[DB_ExcelEntry] = None):
+              instance_DB_ExcelEntry: Optional[DB_ExcelEntry] = None) -> Optional[FileNotFoundError]:
     """ Сохраняем файл на сервер и добавляем его адрес в бд, если сохранение успешно вызываем запись данных файла в бд
     Добавлен повтор при неудачном сохранении файла.
     """
@@ -26,7 +26,7 @@ def save_file(_self: object,
             upload_instance.save()
             path = Path(upload_instance.file_to_upload.path)
             if path.exists():
-                #entry_to_db_task_Class_version.delay(upload_instance, path)
+                # entry_to_db_task_Class_version.delay(upload_instance, path, instance_DB_ExcelEntry)
                 entry_to_db_task_Class_version(upload_instance, path, instance_DB_ExcelEntry)
             else:
                 log_apps.warning(f'Что-то пошло не так и {upload_instance.file_to_upload.name} не загружен на сервер.')

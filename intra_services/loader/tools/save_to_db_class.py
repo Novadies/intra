@@ -3,7 +3,7 @@ import pandas as p
 from contextlib import suppress
 from typing import List, Dict, Any, Generator, Type, Literal, Optional, Union
 
-from funcy import print_durations, print_iter_durations
+from funcy import print_durations
 from pydantic import ValidationError, BaseModel
 from itertools import count
 
@@ -76,15 +76,16 @@ class DB_ExcelEntry:
     @print_durations('ms', threshold=0.01)
     def router(self, generator: Generator) -> Generator:
         """ Разделяем генератор по структурным частям, в соответствии с моделями, то есть читаем его, обрабатываем, передаём дальше
-        Так же ранее ключи в генераторе были кортежем(model, validator), а стали просто model.
+        Ключи в генераторе были кортежем (model, validator), а стали просто model.
         """
         for item in generator:
             result_row = []
             for instance in self.aggregator.mytuple:        # Получаем кортежи (модель - валидатор) из класса Aggregator
                 model, validator = instance
                 model_fields = model._meta.get_fields()
-                if self.check_compliance:                                           # проверка полей модели и валидатора
+                if self.check_compliance:                                  # проверка полей модели и валидатора
                     self.check_fields(model_fields, validator)
+                """ Если в документе существуют посторонние поля, они отсекаются """
                 data = {model: {key: value for key, value in item.items() if key in [field.name for field in model_fields]}}
                 data = self.validate(data, validator) if self.is_validate else data              # валидация пайдентиком
                 result_row.append(data)
@@ -128,6 +129,7 @@ class DB_ExcelEntry:
         Данный метод вероятно придётся переопределять если загружать другие файлы
         """
         for model, list_data in _dict.items():
+            print(list_data)
             objects = (model(**item, to_uploader=self.upload_instance, to_user=self.upload_instance.to_user)
                        for item in list_data)  # добавлена связь на модель загрузчика и юзера
             model.objects.bulk_create(objects)
@@ -143,7 +145,7 @@ class DB_ExcelEntry:
             return [field.name for field in input_fields
                     if not any([field.one_to_one, field.many_to_many, field.many_to_one, field.one_to_many])
                     and field.name not in ["id", *args]]
-
+        
         mod_fields = exclude(model_fields)
         val_fields = list(validator.model_fields)
         if mod_fields != val_fields:
@@ -153,7 +155,9 @@ class DB_ExcelEntry:
     @staticmethod
     @print_durations('ms', threshold=0.01)
     def validate(item: dict, validator: Type[BaseModel]) -> dict:
-        """ Валидация данных перед генерацией значения """
+        """ Валидация данных перед генерацией значения.
+        ! Валидация проваливается если предоставлены не все поля модели в загруженном документе !
+        """
         (model, data), = item.items()
         val_data = validator.model_validate(data)
-        return {model: val_data.dict()}
+        return {model: val_data.model_dump()}

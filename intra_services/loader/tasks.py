@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import BinaryIO, Optional
+
 from funcy import print_durations
 
 from .models import aggregator
@@ -7,8 +10,8 @@ from logs.logger import log_apps
 
 
 @print_durations('ms')
-def entry_to_db_task_Class_version(upload_instance, file_path,
-                                   instance_DB_ExcelEntry):  # задача для селери как-то так выглядит
+def entry_to_db_task_Class_version(upload_instance: BinaryIO, file_path: Path,
+                                   instance_DB_ExcelEntry: Optional[DB_ExcelEntry]):  # задача для селери как-то так выглядит
     """ Последовательно вызываем функции для записи на сервер.
     Сначала получаем генератор словарей, который валидирует соответсвие полей и валидирующий значения,
     entry_to_db агрегирует данные от генератора и записывает в бд bulk_create-ом."""
