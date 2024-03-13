@@ -5,10 +5,11 @@ from django.contrib.auth.views import LoginView, PasswordChangeDoneView, Passwor
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView, TemplateView, UpdateView, FormView
 
+from loader.views import FileLoader
 from logs.logger import logger
-from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm, UserPasswordChangeForm
+from .forms import LoginUserForm, RegisterUserForm, ProfileUserForm, UserPasswordChangeForm, LicenceFileLoader
 
 from .models import UserExtraField
 from .tool.logic import catch_warnings_simplefilter_ignore
@@ -110,3 +111,23 @@ class PasswordResetConfirm(PasswordResetConfirmView):
 class PasswordResetComplete(PasswordResetCompleteView):
     """ пароль успешно восстановлен """
     template_name = "users/password_actions/password_reset_complete.html"
+
+
+class LicenceFileLoader(LoginRequiredMixin, FormView):  # todo нужно ли вообще это представление? во первых это должно быть в профиле, во вторых в админке это есть
+    form_class = LicenceFileLoader
+    model = form_class.Meta.model
+    template_name = "users/other/upload.html"
+    def form_valid(self, form):
+        """ Обработка формы """
+        uploaded_files = form.cleaned_data['file_to_upload']
+        print(uploaded_files)
+        # for file in uploaded_files:
+            #update_or_create
+            # upload_instance = self.model(file_to_upload=file, to_user=self.request.user) # fixme file_to_upload это хуйня
+            # upload_instance.save()
+
+            # objects = (model(**item, to_uploader=self.upload_instance, to_user=self.upload_instance.to_user)
+            #            for item in list_data)  # добавлена связь на модель загрузчика и юзера
+            # model.objects.bulk_create(objects)
+
+        return HttpResponseRedirect(self.request.path)

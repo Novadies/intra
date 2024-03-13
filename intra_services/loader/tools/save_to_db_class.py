@@ -129,7 +129,6 @@ class DB_ExcelEntry:
         Данный метод вероятно придётся переопределять если загружать другие файлы
         """
         for model, list_data in _dict.items():
-            print(list_data)
             objects = (model(**item, to_uploader=self.upload_instance, to_user=self.upload_instance.to_user)
                        for item in list_data)  # добавлена связь на модель загрузчика и юзера
             model.objects.bulk_create(objects)

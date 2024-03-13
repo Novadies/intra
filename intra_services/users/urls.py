@@ -17,4 +17,5 @@ urlpatterns = [
     path('password-reset/done/', PasswordResetDone.as_view(), name='password_reset_done'),
     path('password-reset/<uidb64>/<token>/', PasswordResetConfirm.as_view(), name='password_reset_confirm'),
     path('password-reset/complete/', PasswordResetComplete.as_view(), name='password_reset_complete'),
+    path('upload/', LicenceFileLoader.as_view(), name='licence_upload'),
 ]

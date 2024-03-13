@@ -8,7 +8,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from faker import Faker
 import pytest
 from unittest.mock import MagicMock
-from django.db import models
+from django.db import models, connection
 from django.conf import settings
 from openpyxl.workbook import Workbook
 from pydantic import ValidationError
@@ -30,6 +30,7 @@ def test_excel_file(tmp_path):
     # Создание временного файла Excel
     nf = "test_data.xlsx"
     file_path = tmp_path / nf
+    with suppress(FileNotFoundError):    file_path.unlink()
     # Создание и заполнение Excel файла
     workbook = Workbook()
     sheet = workbook.active
@@ -140,6 +141,7 @@ def test_check_fields(db_excel_entry):
 @pytest.mark.django_db
 def test_entry_to_db(db_excel_entry):
     """ В целом ничего не проверяет """
+    print(connection.settings_dict['NAME'])
     def generator():
         yield {'Model1': {'field1': 'value1', 'field2': 'value2'}},  {'Model2': {'field3': 'value3', 'field4': 'value4'}}
         yield {'Model1': {'field1': 'value5', 'field2': 'value6'}},  {'Model2': {'field3': 'value3', 'field4': 'value4'}}

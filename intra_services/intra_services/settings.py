@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from .custom_json_formatter import CustomJsonFormatter
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     #'django_filters',
     'debug_toolbar',
     # сторонние библиотеки
+    "phonenumber_field",
     'crispy_forms',
     "crispy_bootstrap4",
     'ckeditor',
@@ -146,13 +148,22 @@ LOGGING = {
 
 WSGI_APPLICATION = 'intra_services.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        #'ATOMIC_REQUESTS': True
+
+if 'pytest' in sys.argv:  # предположительно это указывает пайтесту на тестовую бд при создании бд в нём
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',  # заменить на нужную
+            'NAME': ':memory:'
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            # 'ATOMIC_REQUESTS': True
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
