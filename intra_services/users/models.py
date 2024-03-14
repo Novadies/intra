@@ -53,6 +53,10 @@ class CustomUserManager(UserManager):
 
 class User(AbstractUser):
     """ дополнение базового юзера """
+      class Meta:
+        indexes = [
+            models.Index(fields=['username', 'telefon_number', 'first_name', 'last_name', 'position']),
+        ]
     objects = CustomUserManager()
     # todo возможно профессии должны быть в бд. Для того что бы была возможность добавлять новые у персонала, например
     POSITION = Choices(
@@ -64,11 +68,11 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True, null=True)
     patronymic = models.CharField(max_length=99, blank=True, db_index=True, verbose_name='Отчество')
-    position = StatusField(choices_name='POSITION', db_index=True, verbose_name='Должность')     # null=True,
+    position = StatusField(choices_name='POSITION', verbose_name='Должность')     # null=True,
     position_rate = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name='Ставка')
     change_rate = MonitorField(monitor='position_rate', verbose_name='Дата последнего изменения ставки')
     # todo с номерами тоже самое. Возможно для них должна быть отдельная таблица
-    telefon_number = PhoneNumberField(blank=True, db_index=True)
+    telefon_number = PhoneNumberField(blank=True)
     uuid = UrlsafeTokenField(editable=False, max_length=128, null=True)  # todo Токен/ по заказу Николая. хз нах нужен
 
     REQUIRED_FIELDS = ['username']  # обязательные поля
