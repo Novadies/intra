@@ -4,9 +4,11 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
+from django.db.models import Value
+from django.db.models.functions import Concat
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from more_itertools import collapse
-from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
 from users.forms import RegisterUserForm, UserForm
 from users.models import User, UserExtraField, UserLicencesField, Competency, CompetencyAmongUser
@@ -35,7 +37,7 @@ class CompetencyInline(admin.TabularInline):
     verbose_name_plural = "Компетенции сотрудника"
     verbose_name = "вид компетенции"
 
-    # filter_horizontal = ("competence_id", 'to_user')
+    # filter_horizontal = ("", '')
 
 
 class ExtraUserInline(admin.StackedInline):
@@ -45,10 +47,9 @@ class ExtraUserInline(admin.StackedInline):
     empty_value_display = ''
     readonly_fields = ['get_photo']
 
-    # radio_fields = {"education": admin.VERTICAL}
-
     def get_photo(self, obj):
-        return mark_safe(f'<img src="{obj.photo.url}" style="max-height: 300px;">') if obj.photo.url else None
+        max_height = '300'
+        return mark_safe(f'<img src="{obj.photo.url}" style="max-height: {max_height}px;">') if obj.photo.url else None
 
     get_photo.short_description = 'Фотография'
 
@@ -84,7 +85,7 @@ class Competency_in_admin(admin.ModelAdmin):
     fieldsets = (('Компетенции', {'fields': ('competence', 'requirements')}),)
     list_display = ['competence', 'requirements']
     inlines = [CompetencyInline]
-    # filter_horizontal = ("competence_id", 'user_id')
+    # filter_horizontal = ("", '')
 
 
 @admin.register(User)
@@ -92,23 +93,21 @@ class CustomUserAdmin(UserAdmin):
     """ Головная форма отображения юзеров"""
     form = UserForm
     add_form = RegisterUserForm  # здесь нужно просто указать свою форму регистрации наследуемую от UserCreationForm
-    model = get_user_model()  # по идее переопределяет form.Meta.User, лучше не удалять на всякий случай
-    list_display = ['last_name', 'first_name', 'patronymic',
+    model = get_user_model()
+    inlines = (ExtraUserInline, LicencesUserInline, CompetencyInline)
+    list_display = [#'last_name', 'first_name', 'patronymic',
                     'case_name',
                     'email', 'telefon_number', 'username',
                     'is_staff']  # отображение в корневой папке Пользователи
-    # readonly_fields = []
-    # list_select_related = True
     list_display_links = ('case_name', 'email', 'username')
     search_fields = ['case_name', 'email', 'telefon_number', 'username']
-    # date_hierarchy = 'поле'
+    list_per_page = 150
     # filter_horizontal = (
     #     "groups",
     #     "user_permissions",
     # )
-    list_per_page = 150
 
-    inlines = (ExtraUserInline, LicencesUserInline, CompetencyInline)
+
     fieldsets = (
         ('ФИО', {'fields': ('first_name', 'patronymic', 'last_name')}),
         ('Основные данные', {'fields': ('username', 'password', 'email', 'telefon_number'),
@@ -120,9 +119,30 @@ class CustomUserAdmin(UserAdmin):
         ('Даты пользователя', {'fields': ('last_login', 'date_joined'), 'classes': ['collapse']}),
     )
 
-    @admin.display(description="Имя")
-    def case_name(self):
-        return f"{self.last_name} {self.first_name} {self.patronymic}"
+    @admin.display(description="Имя", ordering=Concat("last_name", Value(" "), "first_name", Value(" "), 'patronymic'))
+    def case_name(self, obj):
+        color_code = '006400'
+        return format_html(f'<span style="color: #{color_code};">{obj.last_name} {obj.first_name} {obj.patronymic}</span>')
+
+    def get_form(self, request, obj=None, **kwargs):
+        """ Только персонал может видеть определённые поля в User"""
+        if not request.user.is_superuser or request.user.is_staff:
+            kwargs.pop("position_rate", None)  # todo проверить работу, возможно kwargs не содержит полей
+        return super().get_form(request, obj, **kwargs)
+
+    def get_formsets_with_inlines(self, request, obj=None):
+        """ Только персонал может видеть определённые поля в inlines """
+        excl = {
+            ExtraUserInline: ['about_user', ],
+                   }
+        for inline in self.get_inline_instances(request, obj):
+            if not excl or request.user.is_staff or request.user.is_superuser or not isinstance(inline, tuple(excl)):
+                yield inline.get_formset(request, obj), inline
+            else:
+                formset = inline.get_formset(request, obj)                      # todo проверить работу
+                for form in formset:
+                    [form.fields.pop(name, None) for name in excl[inline]]
+                yield formset, inline
 
     def get_readonly_fields(self, request, obj=None):
         """ Запретить пользователям, не являющимся суперпользователями,
