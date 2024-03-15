@@ -192,9 +192,14 @@ class Project(models.Model):
     )
     """ пример: руководитель руководит разными проектами (тут не имеет разницы что проекты могут совпадать по времени, для этого реализовывается валидация) по этому внешний ключ 
     """
-    leader = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,)   
+    @staticmetod
+    def get_choices():
+        
+        return {}
+    # todo: для проекта необходимо реализовать добавление требуемых компетенций, и соответственно выбор персонала должно быть отфильтровано на этом основании
+    leader = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT, limit_choices_to=self.get_choices())   
     # deputy = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,)  # каковы компетенции зама?
-    personal = models.ManyToManyField("CompetencyAmongUser", on_delete=models.PROTECT,)
+    personal = models.ManyToManyField("CompetencyAmongUser", on_delete=models.PROTECT, )
     # manadger = StatusField(choices_name='MANADGERS', verbose_name='Менеджеры')  # todo: менеджеры должны быть в бд
     
     code = models.CharField(max_length=99, blank=True, verbose_name='Шифр проекта')
