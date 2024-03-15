@@ -186,6 +186,9 @@ class CompetencyAmongUser(models.Model):
 
 class Project(models.Model):
     """ Модель проекта, соединяется с промежуточной моделью CompetencyAmongUser, но не напрямую с User """
+    
+    # todo: Для модели супервайзинга возможно целесообразно использовать древовидную структуру и соотвественно mptt или глубина вложенности слишком мала что бы был смысл?
+    
     BOOL = Choices(
         ('action', 'В процессе'),
         ('complet', 'Завершён'),
@@ -204,6 +207,7 @@ class Project(models.Model):
     
     code = models.CharField(max_length=99, blank=True, verbose_name='Шифр проекта')
     place = models.CharField(max_length=99, blank=True, verbose_name='Локация')
+    plant = models.CharField(max_length=99, blank=True, verbose_name='Предприятие')
     start = models.DateField(blank=True, null=True, verbose_name="Дачало проекта")
     # todo: у проекта ставится дата завершения когда меняется его статус. Если даты выставлена, а потом поменян статус дата обновится, что может быть не то что ожидается.
     stop = MonitorField(monitor='status', verbose_name='Дата завершения проекта') 
