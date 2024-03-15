@@ -76,6 +76,16 @@ class LicencesUserInline(admin.StackedInline):
             (upload_folder, {'fields': self.collapses(DOC), 'classes': ['collapse']})
             for upload_folder, DOC in zip(self.model.upload_folder, [self.model.DOC1, self.model.DOC2])
         ]
+
+@admin.register(Project)
+class Project_in_admin(admin.ModelAdmin):
+    inlines = [CompetencyInline]
+    list_display = ['code', 'leader']
+       fieldsets = (
+        ('Информация', {'fields': ('leader', 'code')}),
+        ('О пользователе', {'fields': ('place', ('start', 'stop'), 'status')}),
+    )
+
 @admin.register(CompetencyAmongUser)
 class Competency_AmongUser(admin.ModelAdmin):
     list_display = ['competency', 'user']
