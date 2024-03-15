@@ -65,7 +65,7 @@ class User(AbstractUser):
         ('engineer2', 'Инженер II категории'),
         ('engineer3', 'Инженер III категории'),
     )
-
+    is_active.verbose_name = "Действующий сотрудник?"
     email = models.EmailField(unique=True, null=True)
     patronymic = models.CharField(max_length=99, blank=True, db_index=True, verbose_name='Отчество')
     position = StatusField(choices_name='POSITION', verbose_name='Должность')     # null=True,
@@ -75,9 +75,9 @@ class User(AbstractUser):
     telefon_number = PhoneNumberField(blank=True)
     uuid = UrlsafeTokenField(editable=False, max_length=128, null=True)  # todo Токен/ по заказу Николая. хз нах нужен
 
-    REQUIRED_FIELDS = ['username']  # обязательные поля
-    USERNAME_FIELD = 'email'  # вместо логина
-    ALL_USERNAME_FIELD = 'email', 'username'  # это кастомная константа, имеет приоритет перед USERNAME_FIELD
+    REQUIRED_FIELDS = ['username']                    # обязательные поля
+    USERNAME_FIELD = 'email'                          # для логина используется 
+    ALL_USERNAME_FIELD = 'email', 'username'          # это кастомная константа, имеет приоритет перед USERNAME_FIELD
 
     def __str__(self):
         return f"{self.last_name} {self.first_name or ''}" if self.last_name else self.username
@@ -171,6 +171,9 @@ class Competency(models.Model):
         related_name="user_competence",
         through='CompetencyAmongUser'
     )
+    
+    def __str__(self):
+        return f'{competence}'
 
 class CompetencyAmongUser(models.Model):
     """ Промежуточная модель для Competency и User """
@@ -180,3 +183,27 @@ class CompetencyAmongUser(models.Model):
     #     "Project",
     #     related_name="user_competence",
     # )
+
+class Project(models.Model):
+    """ Модель проекта, соединяется с промежуточной моделью CompetencyAmongUser, но не напрямую с User """
+    BOOL = Choices(
+        ('action', 'В процессе'),
+        ('complet', 'Завершён'),
+    )
+    """ пример: руководитель руководит разными проектами (тут не имеет разницы что проекты могут совпадать по времени, для этого реализовывается валидация) по этому внешний ключ 
+    """
+    leader = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,)   
+    # deputy = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,)  # каковы компетенции зама?
+    personal = models.ManyToManyField("CompetencyAmongUser", on_delete=models.PROTECT,)
+    # manadger = StatusField(choices_name='MANADGERS', verbose_name='Менеджеры')  # todo: менеджеры должны быть в бд
+    
+    code = models.CharField(max_length=99, blank=True, verbose_name='Шифр проекта')
+    place = models.CharField(max_length=99, blank=True, verbose_name='Локация')
+    start = models.DateField(blank=True, null=True, verbose_name="Дачало проекта")
+    # todo: у проекта ставится дата завершения когда меняется его статус. Если даты выставлена, а потом поменян статус дата обновится, что может быть не то что ожидается.
+    stop = MonitorField(monitor='status', verbose_name='Дата завершения проекта') 
+    status =  StatusField(choices_name='BOOL', verbose_name='Статус проекта') 
+    
+    def __str__(self):
+        return f'{code}   {place or ''}'
+    
