@@ -68,6 +68,7 @@ class User(AbstractUser):
     is_active.verbose_name = "Действующий сотрудник?"
     email = models.EmailField(unique=True, null=True)
     patronymic = models.CharField(max_length=99, blank=True, db_index=True, verbose_name='Отчество')
+    personal_number = models.PositiveIntegerField(unique=True, null=True, verbose_name='Табельный номер')
     position = StatusField(choices_name='POSITION', verbose_name='Должность')     # null=True,
     position_rate = models.PositiveIntegerField(default=0, blank=True, null=True, verbose_name='Ставка')
     change_rate = MonitorField(monitor='position_rate', verbose_name='Дата последнего изменения ставки')
