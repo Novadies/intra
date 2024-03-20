@@ -182,7 +182,7 @@ class CompetencyAmongUser(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE,)
     # to_project = models.ManyToManyField(
     #     "Project",
-    #     related_name="user_competence",
+    #     related_name="user_among_competence",
     # )
 
 class Project(models.Model):
@@ -201,9 +201,9 @@ class Project(models.Model):
         
         return {}
     # todo: для проекта необходимо реализовать добавление требуемых компетенций, и соответственно выбор персонала должно быть отфильтровано на этом основании
-    leader = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT, limit_choices_to=self.get_choices())   
-    # deputy = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,)  # каковы компетенции зама?
-    personal = models.ManyToManyField("CompetencyAmongUser", on_delete=models.PROTECT, )
+    leader = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,  related_name='project',limit_choices_to=self.get_choices())   
+    # deputy = models.ForeignKey("CompetencyAmongUser", on_delete=models.PROTECT,related_name='project',)  # каковы компетенции зама?
+    personal = models.ManyToManyField("CompetencyAmongUser", on_delete=models.PROTECT, related_name='project',)
     # manadger = StatusField(choices_name='MANADGERS', verbose_name='Менеджеры')  # todo: менеджеры должны быть в бд
     
     code = models.CharField(max_length=99, blank=True, verbose_name='Шифр проекта')
